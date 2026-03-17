@@ -23,11 +23,12 @@
             height: 100%;
             width: 100%;
             background-color: var(--bg);
-            font-family: -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             color: var(--text);
-            display: flex;
+            display: none; /* Hidden by default for the password check */
             align-items: center;
             justify-content: center;
+            overflow: hidden;
         }
 
         .container {
@@ -44,21 +45,20 @@
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            display: none; /* Hidden by default */
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            animation: fadeIn 0.5s ease;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
 
         .card.active {
             display: flex;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            opacity: 1;
+            transform: translateY(0);
         }
 
         h2 {
@@ -91,7 +91,14 @@
             font-size: 1rem;
             width: 100%;
             cursor: pointer;
-            -webkit-appearance: none; /* For iOS */
+            -webkit-appearance: none;
+            touch-action: manipulation;
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        button:active {
+            background: #969e8f;
+            transform: scale(0.98);
         }
 
         button.secondary {
@@ -104,13 +111,14 @@
             bottom: 20px;
             font-size: 0.8rem;
             opacity: 0.5;
+            width: 100%;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Step 1 -->
         <div class="card active" id="s1">
             <h2>Hi Bebelab,</h2>
             <p>I made this for you. Just a quiet space for whenever you need it.</p>
@@ -119,25 +127,22 @@
             </div>
         </div>
 
-        <!-- Step 2 -->
         <div class="card" id="s2">
-            <h2>How is your peace today, Bebelab?</h2>
+            <h2>How is your peace today, Jeizen?</h2>
             <div class="btn-group">
                 <button onclick="show('s3a')">It's okay</button>
                 <button class="secondary" onclick="show('s3b')">A bit heavy</button>
             </div>
         </div>
 
-        <!-- Step 3a -->
         <div class="card" id="s3a">
             <p class="quote">"Peace is not the absence of conflict, but the ability to cope with it."</p>
-            <p>I'm glad to hear that, Mahal ko.</p>
+            <p>I'm glad to hear that, Jeizen.</p>
             <div class="btn-group">
                 <button onclick="show('s4')">Next</button>
             </div>
         </div>
 
-        <!-- Step 3b -->
         <div class="card" id="s3b">
             <p class="quote">"It's okay to not be okay. Sometimes we need the quiet to heal."</p>
             <p>Take all the time you need, Bebelab.</p>
@@ -146,7 +151,6 @@
             </div>
         </div>
 
-        <!-- Step 4 -->
         <div class="card" id="s4">
             <p class="quote">"You don't have to be 'okay' all the time. You just have to be present."</p>
             <h2>I'm just a tap away whenever you're ready.</h2>
@@ -161,16 +165,46 @@
     <div class="footer">For Jeizen &bull; Love, Diego</div>
 
     <script>
+        // --- PASSWORD PROTECTION ---
+        // Change "our-date" to the actual password you want her to use
+        const PASS = "111425"; 
+
+        function checkPass() {
+            const entry = prompt("Enter the secret code to enter the garden:");
+            if (entry === PASS) {
+                document.body.style.display = "flex";
+            } else {
+                alert("Incorrect code. Refresh the page to try again.");
+            }
+        }
+
+        // Run the password check on load
+        window.onload = checkPass;
+
+        // --- NAVIGATION LOGIC ---
         function show(id) {
-            // Hide all cards
             const cards = document.querySelectorAll('.card');
-            cards.forEach(c => c.classList.remove('active'));
             
-            // Show the target card
-            document.getElementById(id).classList.add('active');
-            
-            // Scroll to top of card (for small screens)
-            window.scrollTo(0,0);
+            // Start fade out of current card
+            cards.forEach(c => {
+                if(c.classList.contains('active')) {
+                    c.style.opacity = "0";
+                    c.style.transform = "translateY(-10px)";
+                }
+            });
+
+            // Wait for fade out, then switch
+            setTimeout(() => {
+                cards.forEach(c => {
+                    c.classList.remove('active');
+                    c.style.opacity = ""; // Reset inline styles
+                    c.style.transform = "";
+                });
+                
+                const nextCard = document.getElementById(id);
+                nextCard.classList.add('active');
+                window.scrollTo(0,0);
+            }, 300); 
         }
     </script>
 </body>
