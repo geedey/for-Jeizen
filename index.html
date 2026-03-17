@@ -170,48 +170,51 @@
 
     <script>
         // --- PASSWORD CONFIG ---
-        const PASS = "111425"; 
+const PASS = "111425"; 
 
-        function checkPass() {
-            const entry = prompt("Enter the secret code to enter the garden:");
-            
-            if (entry === PASS) {
-                // Success: Reveal the container
-                const container = document.getElementById('main-container');
+function checkPass() {
+    const entry = prompt("Enter the secret code to enter the garden:");
+    
+    if (entry === PASS) {
+        // We use a small timeout to ensure the DOM is ready to be manipulated
+        setTimeout(() => {
+            const container = document.getElementById('main-container');
+            if (container) {
                 container.style.opacity = "1";
                 container.style.pointerEvents = "auto";
-            } else {
-                alert("Incorrect code. Please refresh the page to try again.");
             }
+        }, 100);
+    } else {
+        alert("Incorrect code. Please refresh the page to try again.");
+    }
+}
+
+// Run check immediately
+checkPass();
+
+// --- CARD NAVIGATION ---
+function show(id) {
+    const cards = document.querySelectorAll('.card');
+    
+    // Fade out current card
+    cards.forEach(c => {
+        if(c.classList.contains('active')) {
+            c.style.opacity = "0";
+            c.style.transform = "translateY(-10px)";
         }
+    });
 
-        // Run check after the page loads
-        window.addEventListener('DOMContentLoaded', checkPass);
-
-        // --- CARD NAVIGATION ---
-        function show(id) {
-            const cards = document.querySelectorAll('.card');
-            
-            // Fade out the current active card
-            cards.forEach(c => {
-                if(c.classList.contains('active')) {
-                    c.style.opacity = "0";
-                    c.style.transform = "translateY(-10px)";
-                }
-            });
-
-            // Wait for transition, then show new card
-            setTimeout(() => {
-                cards.forEach(c => {
-                    c.classList.remove('active');
-                    c.style.opacity = ""; 
-                    c.style.transform = "";
-                });
-                
-                const nextCard = document.getElementById(id);
-                nextCard.classList.add('active');
-            }, 350); 
+    // Switch cards
+    setTimeout(() => {
+        cards.forEach(c => {
+            c.classList.remove('active');
+            c.style.opacity = ""; 
+            c.style.transform = "";
+        });
+        
+        const nextCard = document.getElementById(id);
+        if (nextCard) {
+            nextCard.classList.add('active');
         }
-    </script>
-</body>
-</html>
+    }, 350); 
+}
