@@ -12,40 +12,28 @@
             --accent: #d4a373;
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
+            margin: 0; padding: 0; height: 100%; width: 100%;
             background-color: var(--bg);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* The container starts invisible for the password check */
-        .container {
+        /* Container is hidden by default using display:none */
+        #main-container {
+            display: none; 
             width: 85%;
             max-width: 350px;
-            height: 400px;
-            position: relative;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.8s ease;
+            flex-direction: column;
+            align-items: center;
         }
 
         .card {
             background: white;
             width: 100%;
-            height: 100%;
             padding: 30px;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
@@ -54,81 +42,40 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            animation: fadeIn 0.4s ease-out;
         }
 
-        .card.active {
-            display: flex;
-            opacity: 1;
-            transform: translateY(0);
+        .card.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        h2 {
-            font-weight: 300;
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-        }
+        h2 { font-weight: 300; font-size: 1.4rem; margin-bottom: 20px; }
+        .quote { font-style: italic; font-size: 1.1rem; color: var(--sage); margin-bottom: 20px; line-height: 1.5; }
 
-        .quote {
-            font-style: italic;
-            font-size: 1.1rem;
-            color: var(--sage);
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .btn-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-        }
+        .btn-group { display: flex; flex-direction: column; gap: 12px; width: 100%; }
 
         button {
-            background: var(--sage);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 1rem;
-            width: 100%;
-            cursor: pointer;
-            -webkit-appearance: none;
-            touch-action: manipulation; /* Fixes mobile delay/zoom */
-            transition: background 0.3s, transform 0.1s;
+            background: var(--sage); color: white; border: none;
+            padding: 15px; border-radius: 12px; font-size: 1rem;
+            width: 100%; cursor: pointer; touch-action: manipulation;
         }
 
-        button:active {
-            background: #969e8f;
-            transform: scale(0.96);
-        }
+        button:active { background: #969e8f; transform: scale(0.98); }
+        button.secondary { background: #eee; color: #777; }
 
-        button.secondary {
-            background: #eee;
-            color: #777;
-        }
-
-        .footer {
-            position: fixed;
-            bottom: 20px;
-            font-size: 0.8rem;
-            opacity: 0.5;
-            width: 100%;
-            text-align: center;
-        }
+        .footer { position: fixed; bottom: 20px; font-size: 0.8rem; opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <div class="container" id="main-container">
+    <div id="main-container">
         <div class="card active" id="s1">
             <h2>Hi Bebelab,</h2>
             <p>I made this for you. Just a quiet space for whenever you need it.</p>
-            <div class="btn-group">
-                <button onclick="show('s2')">Enter</button>
-            </div>
+            <button onclick="show('s2')">Enter</button>
         </div>
 
         <div class="card" id="s2">
@@ -142,79 +89,47 @@
         <div class="card" id="s3a">
             <p class="quote">"Peace is not the absence of conflict, but the ability to cope with it."</p>
             <p>I'm glad to hear that, Jeizen.</p>
-            <div class="btn-group">
-                <button onclick="show('s4')">Next</button>
-            </div>
+            <button onclick="show('s4')">Next</button>
         </div>
 
         <div class="card" id="s3b">
             <p class="quote">"It's okay to not be okay. Sometimes we need the quiet to heal."</p>
             <p>Take all the time you need, Bebelab.</p>
-            <div class="btn-group">
-                <button onclick="show('s4')">Next</button>
-            </div>
+            <button onclick="show('s4')">Next</button>
         </div>
 
         <div class="card" id="s4">
             <p class="quote">"You don't have to be 'okay' all the time. You just have to be present."</p>
             <h2>I'm just a tap away whenever you're ready.</h2>
-            <p>No pressure. Just here.</p>
             <p style="color:var(--accent); font-weight:bold;">Love, Diego</p>
-            <div class="btn-group">
-                <button onclick="location.reload()">Restart</button>
-            </div>
+            <button onclick="location.reload()">Restart</button>
         </div>
     </div>
 
     <div class="footer">For Jeizen &bull; Love, Diego</div>
 
     <script>
-        // --- PASSWORD CONFIG ---
-const PASS = "111425"; 
+        const PASS = "111425";
 
-function checkPass() {
-    const entry = prompt("Enter the secret code to enter the garden:");
-    
-    if (entry === PASS) {
-        // We use a small timeout to ensure the DOM is ready to be manipulated
-        setTimeout(() => {
-            const container = document.getElementById('main-container');
-            if (container) {
-                container.style.opacity = "1";
-                container.style.pointerEvents = "auto";
+        // Simple password check
+        function checkPass() {
+            const entry = prompt("Enter the secret code to enter the garden:");
+            if (entry === PASS) {
+                // Show the container using display:flex
+                document.getElementById('main-container').style.display = 'flex';
+            } else {
+                alert("Incorrect code. Refresh to try again.");
             }
-        }, 100);
-    } else {
-        alert("Incorrect code. Please refresh the page to try again.");
-    }
-}
-
-// Run check immediately
-checkPass();
-
-// --- CARD NAVIGATION ---
-function show(id) {
-    const cards = document.querySelectorAll('.card');
-    
-    // Fade out current card
-    cards.forEach(c => {
-        if(c.classList.contains('active')) {
-            c.style.opacity = "0";
-            c.style.transform = "translateY(-10px)";
         }
-    });
 
-    // Switch cards
-    setTimeout(() => {
-        cards.forEach(c => {
-            c.classList.remove('active');
-            c.style.opacity = ""; 
-            c.style.transform = "";
-        });
-        
-        const nextCard = document.getElementById(id);
-        if (nextCard) {
-            nextCard.classList.add('active');
+        // Trigger prompt immediately
+        checkPass();
+
+        function show(id) {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(c => c.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         }
-    }, 350); 
-}
+    </script>
+</body>
+</html>
